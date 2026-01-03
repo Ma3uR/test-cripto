@@ -82,7 +82,7 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center p-4 md:p-8 gap-6">
-      <div className="flex flex-col lg:flex-row gap-3 items-stretch lg:items-start max-w-[1200px] w-full">
+      <div className="flex flex-col lg:flex-row gap-3 items-stretch max-w-[1200px] w-full">
         <WalletCard
           initialBalance={walletBalance}
           initialPortfolio={portfolio}

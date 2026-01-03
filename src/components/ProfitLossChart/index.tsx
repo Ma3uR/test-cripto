@@ -82,7 +82,7 @@ export function ProfitLossChart({
   }, []);
 
   return (
-    <Card className="flex-1 gap-[5px] min-h-[235px] w-full lg:min-w-[400px]">
+    <Card className="flex-1 gap-[19px] w-full lg:min-w-[400px]">
       {/* Header Row */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         {/* Title */}

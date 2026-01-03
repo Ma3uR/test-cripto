@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useRef, useCallback } from 'react';
 import {
   AreaChart,
   Area,
@@ -8,7 +8,6 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
-  TooltipProps,
 } from 'recharts';
 import { PricePoint } from '@/types';
 
@@ -17,27 +16,9 @@ interface ChartProps {
   onHover?: (point: PricePoint | null) => void;
 }
 
-interface CustomTooltipProps extends TooltipProps<number, string> {
-  active?: boolean;
-  payload?: Array<{ payload: PricePoint }>;
-}
-
-function CustomTooltip({ active, payload }: CustomTooltipProps) {
-  if (active && payload && payload.length) {
-    const data = payload[0].payload;
-    return (
-      <div className="bg-white border border-[#E5E5E5] rounded-lg px-3 py-2 shadow-lg">
-        <p className="text-xs text-[#868686]">{data.date}</p>
-        <p className="text-sm font-medium">
-          ${data.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-        </p>
-      </div>
-    );
-  }
-  return null;
-}
-
 export function Chart({ data, onHover }: ChartProps) {
+  const lastPointRef = useRef<PricePoint | null>(null);
+
   // Calculate min and max for better chart visualization
   const { minValue, maxValue } = useMemo(() => {
     if (data.length === 0) return { minValue: 0, maxValue: 100 };
@@ -53,33 +34,62 @@ export function Chart({ data, onHover }: ChartProps) {
     };
   }, [data]);
 
-  const handleMouseMove = (state: unknown) => {
-    const chartState = state as { activePayload?: Array<{ payload: PricePoint }> };
-    if (chartState.activePayload && chartState.activePayload.length > 0) {
-      onHover?.(chartState.activePayload[0].payload);
-    }
+  // Format timestamp for X-axis labels
+  const formatXAxisLabel = (timestamp: number) => {
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    });
   };
 
-  const handleMouseLeave = () => {
+  // Get evenly spaced ticks for X-axis
+  const xAxisTicks = useMemo(() => {
+    if (data.length < 2) return [];
+    const tickCount = 5;
+    const step = Math.floor((data.length - 1) / (tickCount - 1));
+    return Array.from({ length: tickCount }, (_, i) => {
+      const index = Math.min(i * step, data.length - 1);
+      return data[index].timestamp;
+    });
+  }, [data]);
+
+  const handleMouseLeave = useCallback(() => {
+    lastPointRef.current = null;
     onHover?.(null);
-  };
+  }, [onHover]);
+
+  // Render tooltip and trigger callback
+  const renderTooltip = useCallback(
+    (props: { active?: boolean; payload?: Array<{ payload: PricePoint }> }) => {
+      if (props.active && props.payload && props.payload.length > 0) {
+        const point = props.payload[0].payload;
+        // Only call onHover if point changed
+        if (lastPointRef.current?.timestamp !== point.timestamp) {
+          lastPointRef.current = point;
+          onHover?.(point);
+        }
+      }
+      return null;
+    },
+    [onHover]
+  );
 
   if (data.length === 0) {
     return (
-      <div className="h-[88px] flex items-center justify-center text-sm text-[#868686]">
+      <div className="h-[80px] flex items-center justify-center text-sm text-[#868686]">
         No data available
       </div>
     );
   }
 
   return (
-    <div className="h-[88px] w-full">
+    <div className="h-[80px] w-full" onMouseLeave={handleMouseLeave}>
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
           data={data}
-          onMouseMove={handleMouseMove}
-          onMouseLeave={handleMouseLeave}
-          margin={{ top: 5, right: 0, left: 0, bottom: 0 }}
+          margin={{ top: 5, right: 5, left: 5, bottom: 0 }}
         >
           <defs>
             <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
@@ -87,10 +97,18 @@ export function Chart({ data, onHover }: ChartProps) {
               <stop offset="100%" stopColor="#FF5100" stopOpacity={0} />
             </linearGradient>
           </defs>
-          <XAxis dataKey="timestamp" hide />
+          <XAxis
+            dataKey="timestamp"
+            axisLine={false}
+            tickLine={false}
+            tick={{ fontSize: 10, fill: '#868686' }}
+            tickFormatter={formatXAxisLabel}
+            ticks={xAxisTicks}
+            interval="preserveStartEnd"
+          />
           <YAxis domain={[minValue, maxValue]} hide />
           <Tooltip
-            content={<CustomTooltip />}
+            content={renderTooltip}
             cursor={{ stroke: '#FF5100', strokeWidth: 1, strokeDasharray: '3 3' }}
           />
           <Area
@@ -100,6 +118,12 @@ export function Chart({ data, onHover }: ChartProps) {
             strokeWidth={2}
             fill="url(#colorValue)"
             animationDuration={500}
+            activeDot={{
+              r: 6,
+              fill: '#FF5100',
+              stroke: '#fff',
+              strokeWidth: 2,
+            }}
           />
         </AreaChart>
       </ResponsiveContainer>
