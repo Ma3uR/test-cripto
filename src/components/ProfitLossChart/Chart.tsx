@@ -62,7 +62,7 @@ export function Chart({ data, onHover }: ChartProps) {
 
   // Render tooltip and trigger callback
   const renderTooltip = useCallback(
-    (props: { active?: boolean; payload?: Array<{ payload: PricePoint }> }) => {
+    (props: { active?: boolean; payload?: ReadonlyArray<{ payload: PricePoint }> }) => {
       if (props.active && props.payload && props.payload.length > 0) {
         const point = props.payload[0].payload;
         // Only call onHover if point changed
