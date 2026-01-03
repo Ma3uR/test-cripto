@@ -36,12 +36,6 @@ export function DepositModal({ isOpen, onClose, walletAddress, onDeposit }: Depo
   const [isLoading, setIsLoading] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // EIP-681 payment link for USDC token transfer
-  // Format: ethereum:<contract>@<chainId>/transfer?address=<recipient>
-  const eip681Link = walletAddress
-    ? `ethereum:${USDC_CONTRACT}@11155111/transfer?address=${walletAddress}`
-    : '';
-
   // MetaMask deeplink (works better on mobile)
   // Opens MetaMask app directly with the address
   const metamaskDeeplink = walletAddress
@@ -85,13 +79,6 @@ export function DepositModal({ isOpen, onClose, walletAddress, onDeposit }: Depo
     } catch (error) {
       console.error('Failed to copy:', error);
     }
-  };
-
-  const handleOpenEIP681 = () => {
-    // Create a temporary anchor and click it - this properly triggers protocol handlers
-    const link = document.createElement('a');
-    link.href = eip681Link;
-    link.click();
   };
 
   const handleOpenMetaMask = () => {
