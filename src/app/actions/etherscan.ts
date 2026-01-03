@@ -115,9 +115,9 @@ export async function getUsdcBalance(address: string): Promise<WalletBalance> {
     // USDC has 6 decimals
     const usdcBalance = parseFloat(rawBalance) / 1e6;
 
-    // For demo purposes, simulate daily change
-    const dailyChange = usdcBalance * 0.052; // 5.2% as shown in design
-    const dailyChangePercent = 5.2;
+    // Calculate daily change based on ETH price movement
+    // Since USDC is stable, daily change reflects portfolio value change from ETH
+    const { dailyChange, dailyChangePercent, isProfit } = await calculateDailyChange(address, usdcBalance);
 
     const balance: WalletBalance = {
       usdc: rawBalance,
@@ -125,7 +125,7 @@ export async function getUsdcBalance(address: string): Promise<WalletBalance> {
       usdValue: usdcBalance, // USDC is 1:1 with USD
       dailyChange,
       dailyChangePercent,
-      isProfit: dailyChange >= 0,
+      isProfit,
     };
 
     setCachedData(cacheKey, balance);
@@ -140,6 +140,49 @@ export async function getUsdcBalance(address: string): Promise<WalletBalance> {
       dailyChangePercent: 0,
       isProfit: true,
     };
+  }
+}
+
+// Calculate daily change based on ETH holdings and price change
+async function calculateDailyChange(
+  address: string,
+  usdcBalance: number
+): Promise<{ dailyChange: number; dailyChangePercent: number; isProfit: boolean }> {
+  try {
+    // Get ETH balance and current price
+    const ethBalance = await getEthBalance(address);
+    const ethHolding = parseFloat(ethBalance.ethFormatted) || 0;
+
+    // Get 24h price change from CoinGecko
+    const response = await fetch(
+      'https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd&include_24hr_change=true',
+      { cache: 'no-store' }
+    );
+    const data = await response.json();
+    const priceChange24h = data.ethereum?.usd_24h_change || 0;
+    const currentEthPrice = data.ethereum?.usd || 3500;
+
+    // Calculate ETH value change
+    const ethValueNow = ethHolding * currentEthPrice;
+    const ethValue24hAgo = ethValueNow / (1 + priceChange24h / 100);
+    const ethDailyChange = ethValueNow - ethValue24hAgo;
+
+    // Total portfolio value and daily change
+    const totalValue = usdcBalance + ethValueNow;
+    const totalValue24hAgo = usdcBalance + ethValue24hAgo;
+    const dailyChange = totalValue - totalValue24hAgo;
+    const dailyChangePercent = totalValue24hAgo > 0
+      ? ((totalValue - totalValue24hAgo) / totalValue24hAgo) * 100
+      : 0;
+
+    return {
+      dailyChange: Math.abs(dailyChange),
+      dailyChangePercent: Math.abs(dailyChangePercent),
+      isProfit: ethDailyChange >= 0,
+    };
+  } catch (error) {
+    console.error('Error calculating daily change:', error);
+    return { dailyChange: 0, dailyChangePercent: 0, isProfit: true };
   }
 }
 
