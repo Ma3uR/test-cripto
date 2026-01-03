@@ -187,14 +187,6 @@ export function DepositModal({ isOpen, onClose, walletAddress, onDeposit }: Depo
                       <ExternalLink size={16} />
                       MetaMask
                     </Button>
-                    <Button
-                      variant="secondary"
-                      onClick={handleOpenEIP681}
-                      className="flex-1"
-                    >
-                      <ExternalLink size={16} />
-                      Other Wallet
-                    </Button>
                   </div>
                 )}
                 <p className="text-xs text-[#868686] text-center">

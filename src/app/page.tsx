@@ -6,6 +6,9 @@ import { getEthPriceHistory } from '@/app/actions/coingecko';
 import { getWalletInfo } from '@/app/actions/wallet';
 import { WalletBalance, PortfolioValue, ChartData, WalletInfo } from '@/types';
 
+// Force dynamic rendering for real-time data
+export const dynamic = 'force-dynamic';
+
 // Demo data for when no wallet is configured
 const demoWalletBalance: WalletBalance = {
   usdc: '984420000',
