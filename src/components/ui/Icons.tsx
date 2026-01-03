@@ -1,58 +1,28 @@
 'use client';
 
+import Image from 'next/image';
+
 export function DepositIcon({ className }: { className?: string }) {
   return (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 20 20"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
+    <Image
+      src="/deposit.svg"
+      alt="Deposit"
+      width={20}
+      height={20}
       className={className}
-    >
-      <path
-        d="M10 3.33334V16.6667"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M5 11.6667L10 16.6667L15 11.6667"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+    />
   );
 }
 
 export function WithdrawIcon({ className }: { className?: string }) {
   return (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 20 20"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
+    <Image
+      src="/withdraw.svg"
+      alt="Withdraw"
+      width={20}
+      height={20}
       className={className}
-    >
-      <path
-        d="M10 16.6667V3.33334"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M5 8.33334L10 3.33334L15 8.33334"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+    />
   );
 }
 
@@ -194,55 +164,25 @@ export function ArrowDownIcon({ className }: { className?: string }) {
 
 export function WalletIcon({ className }: { className?: string }) {
   return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
+    <Image
+      src="/1.svg"
+      alt="Wallet"
+      width={16}
+      height={16}
       className={className}
-    >
-      <path
-        d="M8.66666 9.00001H8.67249"
-        stroke="white"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M4.66666 9.00001H4.67249"
-        stroke="white"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M1.33334 6.66668V9.33334C1.33334 12 2.66668 13.3333 5.33334 13.3333H10.6667C13.3333 13.3333 14.6667 12 14.6667 9.33334V6.66668C14.6667 4.00001 13.3333 2.66668 10.6667 2.66668H5.33334C2.66668 2.66668 1.33334 4.00001 1.33334 6.66668Z"
-        stroke="white"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+    />
   );
 }
 
 export function UsdcIcon({ className }: { className?: string }) {
   return (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
+    <Image
+      src="/2.svg"
+      alt="USDC"
+      width={24}
+      height={24}
       className={className}
-    >
-      <circle cx="12" cy="12" r="12" fill="#2775CA" />
-      <path
-        d="M15.75 13.5C15.75 15.375 14.25 16.5 12 16.5V17.625C12 17.8125 11.8125 18 11.625 18H11.25C11.0625 18 10.875 17.8125 10.875 17.625V16.5C9.375 16.3125 8.0625 15.5625 7.5 14.4375C7.3125 14.0625 7.5 13.6875 7.875 13.5L8.25 13.3125C8.625 13.125 9 13.3125 9.1875 13.6875C9.5625 14.4375 10.3125 15 11.625 15C13.125 15 14.0625 14.4375 14.0625 13.5C14.0625 12.5625 13.3125 12.1875 11.625 11.8125C9.5625 11.25 7.875 10.6875 7.875 8.625C7.875 6.9375 9.1875 5.8125 10.875 5.625V4.5C10.875 4.3125 11.0625 4.125 11.25 4.125H11.625C11.8125 4.125 12 4.3125 12 4.5V5.625C13.3125 5.8125 14.4375 6.5625 14.8125 7.6875C15 8.0625 14.8125 8.4375 14.4375 8.625L14.0625 8.8125C13.6875 9 13.3125 8.8125 13.125 8.4375C12.75 7.6875 12 7.125 11.0625 7.125C9.75 7.125 8.8125 7.6875 8.8125 8.625C8.8125 9.5625 9.5625 9.9375 11.25 10.3125C13.3125 10.875 15.75 11.4375 15.75 13.5Z"
-        fill="white"
-      />
-    </svg>
+    />
   );
 }
 
