@@ -16,7 +16,6 @@ import { Button } from '@/components/ui/Button';
 import {
   DepositIcon,
   WithdrawIcon,
-  EditIcon,
   ArrowUpIcon,
   ArrowDownIcon,
   WalletIcon,
@@ -80,12 +79,9 @@ export function WalletCard({
 
             {/* Name & Date */}
             <div className="flex flex-col gap-0.5">
-              <div className="flex items-center gap-1">
-                <span className="text-base font-medium tracking-[-0.32px]">
-                  {walletInfo.name}
-                </span>
-                <EditIcon />
-              </div>
+              <span className="text-base font-medium tracking-[-0.32px]">
+                {walletInfo.name}
+              </span>
               <span className="text-xs text-[#868686] tracking-[-0.24px]">
                 {walletInfo.joinedDate}
               </span>
