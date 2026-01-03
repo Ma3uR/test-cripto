@@ -1,26 +1,69 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Primary Colors */
+  --orange-primary: #FF5100;
+  --orange-light: rgba(255, 81, 0, 0.1);
+  --orange-avatar: rgba(255, 81, 0, 0.6);
+
+  /* Text Colors */
+  --text-primary: #000000;
+  --text-secondary: #868686;
+
+  /* Status Colors */
+  --green-profit: #3CAB68;
+  --red-loss: #EF4444;
+
+  /* Background & Borders */
+  --bg-white: #FFFFFF;
+  --bg-page: #8B5A2B;
+  --border-card: #E5E5E5;
+  --bg-button-secondary: #F8F8F8;
+  --border-button-secondary: #E1E1E1;
+
+  /* Shadows */
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-button-hover: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-orange-primary: var(--orange-primary);
+  --color-orange-light: var(--orange-light);
+  --color-orange-avatar: var(--orange-avatar);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-green-profit: var(--green-profit);
+  --color-red-loss: var(--red-loss);
+  --color-bg-white: var(--bg-white);
+  --color-bg-page: var(--bg-page);
+  --color-border-card: var(--border-card);
+  --color-bg-button-secondary: var(--bg-button-secondary);
+  --color-border-button-secondary: var(--border-button-secondary);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg-page);
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  min-height: 100vh;
 }
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-card);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+

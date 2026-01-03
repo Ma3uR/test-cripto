@@ -1,65 +1,95 @@
-import Image from "next/image";
+import { WalletCard } from '@/components/WalletCard';
+import { ProfitLossChart } from '@/components/ProfitLossChart';
+import { getUsdcBalance, getPortfolioValue } from '@/app/actions/etherscan';
+import { getEthPriceHistory } from '@/app/actions/coingecko';
+import { getWalletInfo } from '@/app/actions/wallet';
+import { WalletBalance, PortfolioValue, ChartData, WalletInfo } from '@/types';
 
-export default function Home() {
+// Demo data for when no wallet is configured
+const demoWalletBalance: WalletBalance = {
+  usdc: '984420000',
+  usdcFormatted: '984.42',
+  usdValue: 984.42,
+  dailyChange: 23.43,
+  dailyChangePercent: 5.2,
+  isProfit: true,
+};
+
+const demoPortfolio: PortfolioValue = {
+  ethValue: 3361.42,
+  totalValue: 0.01,
+  ethBalance: '0.96',
+};
+
+const demoWalletInfo: WalletInfo = {
+  name: 'My Wallet',
+  address: '',
+  joinedDate: 'Joined Nov 2025',
+};
+
+// Generate demo chart data outside component to avoid impure function calls during render
+function generateDemoChartData(): ChartData {
+  const baseTimestamp = 1704067200000; // Fixed timestamp for demo
+  const points = Array.from({ length: 36 }, (_, i) => {
+    const timestamp = baseTimestamp + i * 10 * 60 * 1000; // 10 min intervals
+    const baseValue = 3500;
+    // Use deterministic variation based on index
+    const variation = Math.sin(i / 5) * 50 + (i % 7) * 5;
+    return {
+      timestamp,
+      value: baseValue + variation,
+      date: `Jan ${Math.floor(i / 6) + 1}, ${String(10 + (i % 6)).padStart(2, '0')}:00 AM`,
+    };
+  });
+
+  return {
+    points,
+    profitLoss: {
+      amount: 223.43,
+      isProfit: true,
+      periodLabel: 'Past Day',
+    },
+  };
+}
+
+export default async function Home() {
+  const walletAddress = process.env.NEXT_PUBLIC_WALLET_ADDRESS || '';
+
+  let walletBalance: WalletBalance;
+  let portfolio: PortfolioValue;
+  let walletInfo: WalletInfo;
+  let chartData: ChartData;
+
+  if (walletAddress) {
+    // Fetch real data
+    [walletBalance, portfolio, walletInfo, chartData] = await Promise.all([
+      getUsdcBalance(walletAddress),
+      getPortfolioValue(walletAddress),
+      getWalletInfo(),
+      getEthPriceHistory('6H', walletAddress),
+    ]);
+  } else {
+    // Use demo data
+    walletBalance = demoWalletBalance;
+    portfolio = demoPortfolio;
+    walletInfo = demoWalletInfo;
+    chartData = generateDemoChartData();
+  }
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <main className="min-h-screen flex items-center justify-center p-4 md:p-8">
+      <div className="flex flex-col lg:flex-row gap-3 items-stretch lg:items-start max-w-[1200px] w-full">
+        <WalletCard
+          initialBalance={walletBalance}
+          initialPortfolio={portfolio}
+          walletInfo={walletInfo}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+        <ProfitLossChart
+          initialData={chartData}
+          initialPeriod="6H"
+          walletAddress={walletAddress}
+        />
+      </div>
+    </main>
   );
 }
