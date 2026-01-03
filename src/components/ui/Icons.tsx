@@ -167,8 +167,8 @@ export function WalletIcon({ className }: { className?: string }) {
     <Image
       src="/1.svg"
       alt="Wallet"
-      width={32}
-      height={32}
+      width={36}
+      height={36}
       className={className}
     />
   );
